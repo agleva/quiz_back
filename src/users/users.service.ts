@@ -26,16 +26,20 @@ export class UsersService {
     createUserDto.updatedAt = new Date(Date.now());
 
     if(!createUserDto) {
-      throw new BadRequestException('User Inválido !'); 
+      throw new BadRequestException('Usuário Inválido !'); 
     }
 
     const hasUser = await this.usersRepository.findOne({
       where: {username: createUserDto.username},
     });
 
-    const addressArray = createUserDto.address;
+    if(hasUser) {
+      throw new BadRequestException('Usuário já inserido !'); 
+    }
 
-    const contactArray = createUserDto.contact;
+    const addressArray: any[] = createUserDto.address;
+
+    const contactArray: any[] = createUserDto.contact;
 
     const address: UserAddressEntity[] = await Promise.all(
       addressArray.map((el: any) => this.preloadAddress(el))
@@ -54,11 +58,73 @@ export class UsersService {
     return data;
   }
 
-  async findOne(username: string): Promise<UserEntity> {
+  async findAll(): Promise<UserEntity[]>{
+    const users = await this.usersRepository.find(
+      { relations: ['address', 'contact'] }
+    );
+   
+    return users;
+  }
+
+  async findUserById(id: number): Promise<UserEntity> {
     const user = await this.usersRepository.findOne(
-      {where: {username} }
+      {where: {id}, relations: ['address', 'contact'] }
     );
     return user;
+  }
+
+  async findOne(username: string) {
+    const user = await this.usersRepository.findOne(
+      {where: {username}}
+    )
+
+    return user;
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const hasUser = await this.usersRepository.findOne({
+      where: {id}
+    });
+
+    if(!hasUser) {
+      throw new BadRequestException('Usuário inexistente !'); 
+    }
+
+    updateUserDto.updatedAt = new Date(Date.now());
+
+    const addressArray: any[] = updateUserDto.address;
+
+    const contactArray: any[] = updateUserDto.contact;
+
+    const address: UserAddressEntity[] = await Promise.all(
+      addressArray?.map((address: any) => this.preloadAddress(address))
+    ) 
+
+    const contact: UserContactEntity[] = await Promise.all(
+      contactArray?.map((contact: any) => this.preloadContact(contact))
+    ) 
+
+    const data = this.usersRepository.save({
+      id: id,
+      name: updateUserDto.name,
+      username: updateUserDto.username,
+      address: address,
+      contact: contact
+    });
+
+    return data;
+
+  }
+
+  async remove(id: number) {
+    const hasUser = await this.usersRepository.findOne({
+      where: {id}
+    });
+
+    if(!hasUser) {
+      throw new BadRequestException('Usuário inexistente !'); 
+    }
+    return this.usersRepository.remove(hasUser);
   }
 
   private async preloadAddress(address: any): Promise<UserAddressEntity> {
@@ -79,7 +145,6 @@ export class UsersService {
   }
   
   private async preloadContact(contact: any): Promise<UserContactEntity> {
-    console.log(contact)
     const hasContact = await this.usersContactRepository.findOne({
       where: {email: contact.email},
     });

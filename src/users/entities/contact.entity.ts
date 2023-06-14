@@ -15,13 +15,16 @@ export class UserContactEntity {
     @Column({nullable: true})
     phone2?: string;
 
-    @ManyToOne(() => UserEntity, (user) => user.contact)
+    @ManyToOne(() => UserEntity, (user) => user.contact, {
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    })
     user: UserEntity;
 
-    @Column()
-    createdAt: Date;
+    @Column({nullable: true})
+    createdAt?: Date;
 
-    @Column()
-    updatedAt: Date;
+    @Column({nullable: true})
+    updatedAt?: Date;
 
 }

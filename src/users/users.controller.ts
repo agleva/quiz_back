@@ -22,23 +22,63 @@ export class UsersController {
     }
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
+  @Get()
+  async findAll() {
+    try {
+      return httpResponse(
+        'Usuários buscados com sucesso !',
+        await this.usersService.findAll()
+      )
+    } catch (error: any) {
+      throw new UnknownException(error.message)
+    }
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
+  @Get(':id')
+  async findUserById(@Param('id') id: string) {
+    try {
+      return httpResponse(
+        'Usuário buscados com sucesso !',
+        await this.usersService.findUserById(+id)
+      )
+    } catch (error: any) {
+      throw new UnknownException(error.message)
+    }
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
+  @Get('getByUsername/:username')
+  async findOne(@Param('username') username: string) {
+    try {
+      return httpResponse(
+        'Usuário buscados com sucesso !',
+        await this.usersService.findOne(username)
+      )
+    } catch (error: any) {
+      throw new UnknownException(error.message)
+    }
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    try {
+      return httpResponse(
+        'Usuário atualizado com sucesso !',
+        await this.usersService.update(+id, updateUserDto)
+      )
+    } catch (error: any) {
+      throw new UnknownException(error.message)
+    }
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    try {
+      return httpResponse(
+        'Usuário deletado com sucesso !',
+        await this.usersService.remove(+id)
+      )
+    } catch (error: any) {
+      throw new UnknownException(error.message)
+    }
+  }
 }

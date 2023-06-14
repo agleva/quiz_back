@@ -13,18 +13,22 @@ export class UserEntity {
     @Column()
     username: string;
 
-    @Column()
-    password: string;
+    @Column({nullable: true})
+    password?: string;
 
-    @OneToMany(() => UserAddressEntity, (addres) => addres.user)
+    @OneToMany(() => UserAddressEntity, (addres) => addres.user, {
+        cascade: true,
+    })
     address: UserAddressEntity[]
 
-    @OneToMany(() => UserContactEntity, (contact) => contact.user)
+    @OneToMany(() => UserContactEntity, (contact) => contact.user, {
+        cascade: ['insert', 'update', 'remove'],
+    })
     contact: UserContactEntity[]
 
-    @Column()
-    createdAt: Date;
+    @Column({nullable: true})
+    createdAt?: Date;
 
-    @Column()
-    updatedAt: Date;
+    @Column({nullable: true})
+    updatedAt?: Date;
 }

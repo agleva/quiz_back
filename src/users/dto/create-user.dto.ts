@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsString, IsNotEmpty, IsArray, IsDate } from "class-validator";
+import { IsString, IsNotEmpty, IsArray, IsDate, IsOptional } from "class-validator";
 import { CreateUserAddressDto } from "./address.dto";
 import { CreateUserContactDto } from "./contact.dto";
 
@@ -14,7 +14,8 @@ export class CreateUserDto {
 
     @IsString()
     @IsNotEmpty()
-    password: string;
+    @IsOptional()
+    password?: string;
 
     @Type(() => CreateUserAddressDto)
     @IsArray()
@@ -26,9 +27,11 @@ export class CreateUserDto {
 
     @IsDate()
     @IsNotEmpty()
-    createdAt: Date;
+    @IsOptional()
+    createdAt?: Date;
     
     @IsDate()
     @IsNotEmpty()
-    updatedAt: Date;
+    @IsOptional()
+    updatedAt?: Date;
 }

@@ -22,15 +22,21 @@ export class UserAddressEntity {
     city: string;
 
     @Column()
+    state: string; 
+
+    @Column()
     country: string;
 
-    @ManyToOne(() => UserEntity, (user) => user.address)
+    @ManyToOne(() => UserEntity, (user) => user.address, {
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    })
     user: UserEntity;
 
-    @Column()
-    createdAt: Date;
+    @Column({nullable: true})
+    createdAt?: Date;
 
-    @Column()
-    updatedAt: Date;
+    @Column({nullable: true})
+    updatedAt?: Date;
 
 }
